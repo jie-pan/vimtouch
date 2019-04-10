@@ -1,10 +1,11 @@
 buildscript {
     repositories {
         mavenCentral()
+        google()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0-rc4'
+        classpath 'com.android.tools.build:gradle:3.1.4'
     }
 }
 repositories {
@@ -17,8 +18,8 @@ apply from: 'libraries/kvj-android.gradle'
 
 android {
 
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.0.0'
 
     defaultConfig {
 
