@@ -28,3 +28,10 @@ set smartindent
 set fileencodings=utf-8,big5,euc-jp,gbk,euc-kr,utf-bom,iso8859-1
 set encoding=utf8
 set tenc=utf8
+
+set hlsearch
+set showmatch
+set incsearch
+set number
+
+
