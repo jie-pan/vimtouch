@@ -59,3 +59,9 @@ You're ready to compile it!
 
 Yes, we need to run the build loop twice at the moment.  It is less than
 ideal, but it does produce an executable that can hobble along at least.
+
+## update
+build pass with android-ndk-r10e
+first run $ndk-build
+then build apk with Android Studio
+
