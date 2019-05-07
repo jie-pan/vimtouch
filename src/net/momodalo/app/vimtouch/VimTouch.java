@@ -256,7 +256,7 @@ public class VimTouch extends ActionBarActivity implements
             try {
                 InputStream attachment = getContentResolver().openInputStream(intent.getData());
 
-                if (attachment.available() > 5000000) {
+                if (attachment.available() > 900000000) {
                     tmpPath = "";
                     new AlertDialog.Builder(this).
                         setTitle(R.string.dialog_title_content_error).
