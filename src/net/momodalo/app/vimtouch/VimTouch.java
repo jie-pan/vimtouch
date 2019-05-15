@@ -69,6 +69,7 @@ import android.widget.TextView;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -242,6 +243,30 @@ public class VimTouch extends ActionBarActivity implements
             return true;
         }
     };
+    //panjie
+    public static String getExtension(String fileName) {
+        int index = fileName.lastIndexOf('.');
+        return (index == -1) ? null : fileName.substring(index + 1);
+    }
+
+
+
+    /**
+     * Gets the base name, without extension, of given file name.
+     * <p/>
+     * e.g. getBaseName("file.txt") will return "file"
+     *
+     * @param fileName the file name
+     * @return the base name
+     */
+    public static String getBaseName(String fileName) {
+        int index = fileName.lastIndexOf('/');
+        if (index == -1) {
+            return fileName;
+        } else {
+            return fileName.substring(index+1);
+        }
+    }
 
     private String getIntentUrl(Intent intent) {
         if (intent == null || intent.getScheme() == null) {
@@ -253,8 +278,40 @@ public class VimTouch extends ActionBarActivity implements
         } else if (intent.getScheme().equals("content")) {
 
             String tmpPath = "tmp";
+            Uri uri = intent.getData();
+            String attachmentFileName = "NoFile";
+            InputStream attachment = null;
+
+
+
             try {
-                InputStream attachment = getContentResolver().openInputStream(intent.getData());
+                String path = UriToPath.getPath(this.getApplicationContext(), uri);
+                if (path != null)
+                {
+                    attachmentFileName = path;
+                    attachment = new FileInputStream(attachmentFileName);
+                    //Log.e(VimTouch.LOG_TAG, "open path" + path);
+                }
+                else
+                {
+                    if (getContentResolver() != null)
+                    {
+                        if (intent != null && intent.getData() != null) {
+                            Cursor c = getContentResolver().query(intent.getData(), null, null, null, null);
+                            c.moveToFirst();
+                            final int
+                                    fileNameColumnId =
+                                    c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
+                            if (fileNameColumnId >= 0) {
+                                attachmentFileName = c.getString(fileNameColumnId);
+                            }
+                        }
+                        attachment = getContentResolver().openInputStream(uri);
+                        //Log.e(VimTouch.LOG_TAG, "open inputstream" + attachmentFileName);
+                    }
+                }
+
+
 
                 if (attachment.available() > 900000000) {
                     tmpPath = "";
@@ -265,19 +322,10 @@ public class VimTouch extends ActionBarActivity implements
                     throw new IOException("file too big");
                 }
 
-                String attachmentFileName = "NoFile";
-                if (intent != null && intent.getData() != null) {
-                    Cursor c = getContentResolver().query(intent.getData(), null, null, null, null);
-                    c.moveToFirst();
-                    final int
-                        fileNameColumnId =
-                        c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
-                    if (fileNameColumnId >= 0) {
-                        attachmentFileName = c.getString(fileNameColumnId);
-                    }
-                }
-
-                String str[] = attachmentFileName.split("\\.");
+                String basename = getBaseName(attachmentFileName);
+                String str[] = basename.split("\\.");
+                //Log.e(VimTouch.LOG_TAG,"attachmentFileName = "  + attachmentFileName);
+                //Log.e(VimTouch.LOG_TAG,str[0]+": " + str[1]);
 
                 File outFile;
                 if (str.length >= 2) {
@@ -285,8 +333,9 @@ public class VimTouch extends ActionBarActivity implements
                         File.createTempFile(str[0], "." + str[1], getDir(tmpPath, MODE_PRIVATE));
                 } else {
                     outFile =
-                        File.createTempFile(attachmentFileName, "", getDir(tmpPath, MODE_PRIVATE));
+                        File.createTempFile(basename, "", getDir(tmpPath, MODE_PRIVATE));
                 }
+		//Log.e(VimTouch.LOG_TAG,outFile.getAbsolutePath());
                 tmpPath = outFile.getAbsolutePath();
 
                 FileOutputStream f = new FileOutputStream(outFile);
