@@ -296,6 +296,7 @@ public class VimTouch extends ActionBarActivity implements
                 while ((len = attachment.read(buffer)) > 0) {
                     f.write(buffer, 0, len);
                 }
+                attachment.close();
                 f.close();
             } catch (Exception e) {
                 tmpPath = null;
