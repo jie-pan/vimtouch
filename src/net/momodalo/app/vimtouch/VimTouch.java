@@ -292,8 +292,9 @@ public class VimTouch extends ActionBarActivity implements
                 FileOutputStream f = new FileOutputStream(outFile);
 
                 byte[] buffer = new byte[1024];
-                while (attachment.read(buffer) > 0) {
-                    f.write(buffer);
+                int len = -1;
+                while ((len = attachment.read(buffer)) > 0) {
+                    f.write(buffer, 0, len);
                 }
                 f.close();
             } catch (Exception e) {
